@@ -13,11 +13,13 @@
     home-manager = {
       url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
-    }
+    };
   };
 
   outputs = { self, nix-darwin, nixpkgs, home-manager, ... }@inputs: let
-    mkSystem = import ./lib/mksystem.nix{
+    overlays = [];
+
+    mkSystem = import ./lib/mksystem.nix {
       inherit overlays nixpkgs inputs;
     };
 

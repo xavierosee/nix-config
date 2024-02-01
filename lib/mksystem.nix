@@ -1,4 +1,4 @@
-{ nixpkgs, inputs }:
+{ nixpkgs, inputs, overlays }:
 
 name:
 {
@@ -22,9 +22,10 @@ in systemFunc rec {
   inherit system;
 
   modules = [
+    { nixpkgs.overlays = overlays; }
     (if isWSL then inputs.nixos-wsl.nixosModules.wsl else {})
 
-    machineConfig
+    hostConfig
     userOSConfig
     home-manager.home-manager {
       home-manager.useGlobalPkgs = true;

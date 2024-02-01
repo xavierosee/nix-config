@@ -165,9 +165,14 @@ in {
       withPython3 = true;
 
       plugins = with pkgs; [
+        customVim.vim-fish
+        customVim.vim-devicons
+
         vimPlugins.vim-markdown
         vimPlugins.vim-nix
       ];
+
+      extraConfig = (import ./vim-config.nix) { inherit sources; };
     };
   };
 }
