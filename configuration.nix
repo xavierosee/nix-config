@@ -7,6 +7,8 @@
     coreutils
     curl
     delta
+    direnv
+    gcc
     gh
     git
     htop
@@ -14,23 +16,27 @@
     neovim
     poetry
     prettyping
+    ripgrep
     tmux
+    vscode
   ];
 
   # Lists packages installed by Homebrew
   homebrew = {
     enable = true;
+    onActivation.cleanup = "uninstall";
     global.autoUpdate = false;
 
     casks = [
       "1password"
       "discord"
+      "google-chrome"
       "slack"
-      "visual-studio-code"
     ];
   };
 
   users.users.xavierosee.home = "/Users/xavierosee";
+  users.users.xavierosee.shell = pkgs.bash;
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
   # nix.package = pkgs.nix;
@@ -54,8 +60,14 @@
     dock.mru-spaces = false;
     finder.AppleShowAllExtensions = true;
     finder.FXPreferredViewStyle = "clmv";
+    NSGlobalDomain.ApplePressAndHoldEnabled = false;
     screencapture.location = "~/Pictures/screenshots";
     screensaver.askForPasswordDelay = 10;
+  };
+
+  system.keyboard = {
+    enableKeyMapping = true;
+    remapCapsLockToControl = true;
   };
 
   nix.linux-builder.enable = true;
