@@ -2,15 +2,17 @@
   description = "System flake configuration file for macOS";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
+    unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nix-darwin = {
         url = "github:LnL7/nix-darwin";
-        inputs.nixpkgs.follows = "nixpkgs";
+        inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
 
     home-manager = {
-        url="github:nix-community/home-manager";
+        url="github:nix-community/home-manager/release-24.05";
         inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -35,7 +37,7 @@
     };
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager, nix-homebrew, homebrew-core, homebrew-cask, homebrew-bundle }: {
+  outputs = inputs@{ self, nix-darwin, nixpkgs, nixpkgs-darwin, unstable, home-manager, nix-homebrew, homebrew-core, homebrew-cask, homebrew-bundle }: {
     # Build darwin flake using:
     # $ darwin-rebuild build --flake .#macbook-pro
     darwinConfigurations."macbook-pro" =
@@ -49,14 +51,14 @@
                     # `home-manager` config
                     home-manager.useGlobalPkgs = true;
                     home-manager.useUserPackages = true;
-                    home-manager.users.xavierosee = import ./home.nix;
+                    home-manager.users.xavier = import ./home.nix;
                 }
 
                 nix-homebrew.darwinModules.nix-homebrew
                 {
                     nix-homebrew = {
                         enable = true;
-                        user = "xavierosee";
+                        user = "xavier";
 
                         taps = {
                             "homebrew/homebrew-core" = homebrew-core;

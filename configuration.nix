@@ -35,8 +35,8 @@
     ];
   };
 
-  users.users.xavierosee.home = "/Users/xavierosee";
-  users.users.xavierosee.shell = pkgs.bash;
+  users.users.xavier.home = "/Users/xavier";
+  users.users.xavier.shell = pkgs.bash;
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
   # nix.package = pkgs.nix;
@@ -47,10 +47,8 @@
     experimental-features = nix-command flakes
   '';
 
-  # Create /etc/zshrc that loads the nix-darwin environment.
+  # Create /etc/bashrc that loads the nix-darwin environment.
   programs.bash.enable = true;
-  # programs.zsh.enable = true; # default shell on catalina
-  # programs.fish.enable = true;
 
   # Enable TouchID auth for sudo
   security.pam.enableSudoTouchIdAuth = true;
@@ -74,7 +72,7 @@
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
-  system.stateVersion = 3;
+  system.stateVersion = 4;
 
   nix.configureBuildUsers = true;
   nixpkgs.config.allowUnfree = true;
