@@ -4,7 +4,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
-    unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    flake-utils.url = "github:numtide/flake-utils";
 
     nix-darwin = {
         url = "github:LnL7/nix-darwin";
@@ -17,61 +18,49 @@
     };
 
     nix-homebrew = {
-        url = "github:zhaofengli-wip/nix-homebrew";
-        inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    homebrew-core = {
-        url = "github:homebrew/homebrew-core";
-        flake = false;
-    };
-
-    homebrew-cask = {
-        url = "github:homebrew/homebrew-cask";
-        flake = false;
-    };
-
-    homebrew-bundle = {
-        url = "github:homebrew/homebrew-bundle";
-        flake = false;
+        url = "github:zhaofengli/nix-homebrew";
+        inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, nixpkgs-darwin, unstable, home-manager, nix-homebrew, homebrew-core, homebrew-cask, homebrew-bundle }: {
-    # Build darwin flake using:
-    # $ darwin-rebuild build --flake .#macbook-pro
-    darwinConfigurations."macbook-pro" =
-        nix-darwin.lib.darwinSystem {
-            system = "x86_64-darwin";
-            modules = [
-                ./configuration.nix
-
-                home-manager.darwinModules.home-manager
-                {
-                    # `home-manager` config
-                    home-manager.useGlobalPkgs = true;
-                    home-manager.useUserPackages = true;
-                    home-manager.users.xavier = import ./home.nix;
+  outputs = inputs@{
+    self,
+    nixpkgs,
+    nixpkgs-darwin,
+    flake-utils,
+    nix-darwin,
+    home-manager,
+    nix-homebrew
+  }: 
+    let
+        config.allowUnfree = true;
+        forSystems = function:
+            nixpkgs.lib.genAttrs [ "x86_64-darwin"] (system:
+                function {
+                    inherit system;
                 }
+            );
+    in {
+        # NixOs configurations
+        /* Placeholder for future configs */
 
-                nix-homebrew.darwinModules.nix-homebrew
-                {
-                    nix-homebrew = {
-                        enable = true;
-                        user = "xavier";
-
-                        taps = {
-                            "homebrew/homebrew-core" = homebrew-core;
-                            "homebrew/homebrew-cask" = homebrew-cask;
-                            "homebrew/homebrew-bundle" = homebrew-bundle;
-                        };
-                        mutableTaps = false;
-                    };
-                }
-            ];
+        # macOS configurations
+        darwinConfigurations = {
+            macbook-pro = nix-darwin.lib.darwinSystem {
+                system = "x86_64-darwin";
+                modules = [
+                    ./hosts/macbook-pro
+                    ./users/xavier
+                    home-manager.darwinModules.home-manager
+                    {
+                        home-manager.useGlobalPkgs = true;
+                        home-manager.useUserPackages = true;
+                        home-manager.users.xavier = import ./users/xavier/home-manager.nix;
+                    }
+                    nix-homebrew.darwinModules.nix-homebrew
+                ];
+            };
         };
 
-    # Expose the package set, including overlays, for convenience.
-    darwinPackages = self.darwinConfigurations."macbook-pro".pkgs;
-  };
+    };
 }
