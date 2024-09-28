@@ -7,6 +7,14 @@
       EDITOR = "nvim";
       BAT_THEME = "GitHub";
     };
+
+    file = {
+      ".wallpapers" = {
+        source = ../../assets/wallpapers;
+        target = "${config.home.homeDirectory}/Pictures/wallpapers";
+        recursive = true;
+      };
+    };
   };
 
   programs = {
@@ -124,5 +132,14 @@
     };
 
     ssh.enable = true;
+  };
+
+  services = {
+    random-background = {
+      enable = if pkgs.stdenv.isLinux then true else false;
+      display = "fill";
+      imageDirectory = "${config.home.homeDirectory}/Pictures/wallpapers";
+      interval = "2h";
+    };
   };
 }
